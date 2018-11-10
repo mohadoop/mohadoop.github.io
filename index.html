@@ -1,13 +1,344 @@
+<!doctype html>
+<html lang="en">
+
 <head>
-  <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
-  <title>Hadoop Property Calculator</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Hadoop Property Calculator | Mohammed Mohiuddin</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+    <style>
+        body { 
+            background: url("./bg.png") no-repeat center center fixed; 
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+    </style>
 </head>
-<div class="uCalc_148040">
-</div>
-<script> 
-	var widgetOptions148040 = { bg_color: "transparent" }; (function() { var a = document.createElement("script"), 
-	h = "head"; 
-	a.async = true; 
-	a.src = (document.location.protocol == "https:" ? "https:" : "http:") + "//ucalc.pro/api/widget.js?id=148040&t="+Math.floor(new Date()/18e5); 
-	document.getElementsByTagName(h)[0].appendChild(a) })();
-</script>
+
+<body>
+    <div class="bg mt-5">&nbsp;</div>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="container col-md-11">
+                <form class='form mt-4 mb-4'>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="core">Number of Cores</label>
+                            <input type="number" class="form-control" id="core" aria-describedby="coreHelp" min="0"
+                                value="16" autofocus>
+                            <small id="coreHelp" class="form-text text-muted">Number of cores on each host</small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="memory">Amount of Memory(in GB)</label>
+                            <input type="number" class="form-control" id="memory" aria-describedby="memoryHelp" min="0"
+                                value="64">
+                            <small id="memoryHelp" class="form-text text-muted">Amount of Memory on each host in GB</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="disk">Number of Disks</label>
+                            <input type="number" class="form-control" id="disk" aria-describedby="diskHelp" min="0"
+                                value="4">
+                            <small id="diskHelp" class="form-text text-muted">Number of disks on each host</small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="hbase">HBase is installed?</label>
+                            <select id="hbase" aria-describedby="hbaseHelp" class="form-control">
+                                <option value="True">Yes</option>
+                                <option value="False">No</option>
+                            </select>
+                            <small id="hbaseHelp" class="form-text text-muted">Select Yes if HBase is installed, No is not</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-lg-2 mt-1 mb-1">
+                <div class="card card-body bg-primary text-center">
+                    <h5>Cores</h5>
+                    <h5 id="cores" class=""></h5>
+                </div>
+            </div>
+            <div class="col-lg-2 mt-1 mb-1">
+                <div class="card card-body bg-warning text-center">
+                    <h5>Disks</h5>
+                    <h5 id="disks" class=""></h5>
+                </div>
+            </div>
+            <div class="col-lg-2 mt-1 mb-1">
+                <div class="card card-body bg-secondary text-center">
+                    <h5>Memory</h5>
+                    <h5 id="memoryPH" class=""></h5>
+                </div>
+            </div>
+            <div class="col-lg-2 mt-1 mb-1">
+                <div class="card card-body bg-danger text-center">
+                    <h5>HBase</h5>
+                    <h5 id="hbasePH" class=""></h5>
+                </div>
+            </div>
+            <div class="col-lg-2 mt-1 mb-1">
+                <div class="card card-body bg-success text-center">
+                    <h5>Reserved</h5>
+                    <h5 id="reserved" class=""></h5>
+                </div>
+            </div>
+            <div class="col-lg-2 mt-1 mb-1">
+                <div class="card card-body bg-info text-center">
+                    <h5>UsableMem</h5>
+                    <h5 id="usableMem" class=""></h5>
+                </div>
+            </div>
+        </div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="">Cluster Capacity</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-fluid table-hover">
+                    <tr>
+                        <td>Num Container</td>
+                        <td id="NumContainer" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>Container Ram</td>
+                        <td id="ContainerRam" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>Used Ram</td>
+                        <td id="UsedRam" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>Unused Ram</td>
+                        <td id="UnusedRam" class="text-right"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="">YARN Configuration</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-fluid table-hover">
+                    <tr>
+                        <td>yarn.scheduler.minimum-allocation-mb</td>
+                        <td id="yarnschedulerminimumallocationmb" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>yarn.scheduler.maximum-allocation-mb</td>
+                        <td id="yarnschedulermaximumallocationmb" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>yarn.nodemanager.resource.memory-mb</td>
+                        <td id="yarnnodemanagerresourcememorymb" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>yarn.app.mapreduce.am.resource.mb</td>
+                        <td id="yarnappmapreduceamresourcemb" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>yarn.app.mapreduce.am.command-opts</td>
+                        <td id="yarnappmapreduceamcommandopts" class="text-right"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="">MapReduce Configuration</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-fluid table-hover">
+                    <tr>
+                        <td>mapreduce.map.memory.mb</td>
+                        <td id="mapreducemapmemorymb" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>mapreduce.map.java.opts</td>
+                        <td id="mapreducemapjavaopts" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>mapreduce.reduce.memory.mb</td>
+                        <td id="mapreducereducememorymb" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>mapreduce.reduce.java.opts</td>
+                        <td id="mapreducereducejavaopts" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>mapreduce.task.io.sort.mb</td>
+                        <td id="mapreducetaskiosortmb" class="text-right"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="">LLAP Configuration</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-fluid table-hover">
+                    <tr>
+                        <td>num_llap_nodes</td>
+                        <td id="mapreducemapmemorymb" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>hive.server2.tex.sessions.per.default.queue</td>
+                        <td id="mapreducemapjavaopts" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td>hive.llap.daemon.yarn.container.mb</td>
+                        <td id="mapreducemapmemorymb" class="text-right"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+
+    </div>
+    <footer class="text-center mt-4 mb-3">
+            © 2018 Mohammed Mohiuddin 
+    </footer>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        //Default Values Update here
+        var defaultMem = 64;
+        var defaultDisk = 4;
+        var defaultCore = 16;
+        var defaultHBase = true;
+
+        var reservedStack = { 4: 1, 8: 2, 16: 2, 24: 4, 48: 6, 64: 8, 72: 8, 96: 12, 128: 24, 256: 32, 512: 64 };
+        var reservedHBase = { 4: 1, 8: 1, 16: 2, 24: 4, 48: 8, 64: 8, 72: 8, 96: 16, 128: 24, 256: 32, 512: 64 };
+        var GB = 1024;
+
+        var memory, disks, cores = 0;
+        var hbaseEnabled = true;
+
+        var output = "";
+        function getMinContainerSize(memory) {
+            if (memory <= 4)
+                return 256;
+            else if (memory <= 8)
+                return 512;
+            else if (memory <= 24)
+                return 1024;
+            else
+                return 2048;
+        }
+        function getReservedStackMemory(memory) {
+            if (memory in reservedStack)
+                return reservedStack[memory];
+            if (memory <= 4)
+                var ret = 1;
+            else if (memory >= 512)
+                var ret = 64;
+            else
+                var ret = 1;
+            return ret;
+        }
+        function getReservedHBaseMem(memory) {
+            if (memory in reservedHBase)
+                return reservedHBase[memory]
+            if (memory <= 4)
+                var ret = 1;
+            else if (memory >= 512)
+                var ret = 64;
+            else
+                var ret = 2;
+            return ret
+        }
+        function genOutput(id, content) {
+            var elementId = "#" + id;
+            $(elementId).html(content);
+        }
+        // function genOutput(str)
+        // {
+        //     output += str + "\n";
+        // }
+        $(document).on("keyup change", "#core, #memory, #number, #hbase", function () {
+            runCalculation();
+        });
+        $(document).ready(runCalculation())
+
+        function runCalculation() {
+            cores = ($("#core").val() == '') ? defaultCore : parseInt($("#core").val());
+            memory = ($("#memory").val() == '') ? defaultMemory : parseInt($("#memory").val());
+            disks = ($("#disk").val() == '') ? defaultDisk : parseInt($("#disk").val());
+            hbaseEnabled = ($("#hbase").val() == 'True') ? true : false;
+
+            // genOutput("Using cores=" +  cores + " memory=" + memory + "GB" + " disks=" + disks + " hbase=" + hbaseEnabled);
+            genOutput("memoryPH", memory + "GB");
+            genOutput("cores", cores);
+            genOutput("disks", disks);
+            genOutput("hbasePH", ((hbaseEnabled) ? "Yes" : "No"));
+
+            var minContainerSize = getMinContainerSize(memory);
+            var reservedStackMemory = getReservedStackMemory(memory);
+            var reservedHBaseMemory = 0;
+            if (hbaseEnabled)
+                reservedHBaseMemory = getReservedHBaseMem(memory);
+
+            var reservedMem = (reservedStackMemory + reservedHBaseMemory);
+            var usableMem = (memory - reservedMem);
+
+            memory -= reservedMem;
+            if (memory < 2)
+                memory = 2;
+
+            reservedMem = Math.max(0, (memory - reservedMem));
+
+            memory *= GB;
+
+            var y = Math.ceil(1.8 * parseFloat(disks));
+            var x = Math.min(y, (memory / minContainerSize));
+            containers = Math.floor(Math.min(2 * cores, x));
+            if (containers <= 2)
+                containers = 3;
+
+            // genOutput("Profile: cores=" + cores + " memory=" + memory + "MB" + " reserved=" + reservedMem + "GB" + " usableMem=" + usableMem + "GB" + " disks=" + disks);
+            genOutput("reserved", reservedMem + "GB");
+            genOutput("usableMem", usableMem + "GB");
+            var container_ram = Math.abs(memory / containers);
+            if (container_ram > GB)
+                container_ram = parseInt(Math.floor(container_ram / 512)) * 512
+
+            genOutput("NumContainer", Math.floor(containers));
+            genOutput("ContainerRam", container_ram + "MB");
+            genOutput("UsedRam", parseInt(containers * container_ram / parseFloat(GB)) + "GB");
+            genOutput("UnusedRam", reservedMem + "GB");
+            genOutput("yarnschedulerminimumallocationmb", container_ram);
+            genOutput("yarnschedulermaximumallocationmb", containers * container_ram);
+            genOutput("yarnnodemanagerresourcememorymb", containers * container_ram);
+            var map_memory = container_ram;
+
+            // DO DOUBLE CHECK if I parsed this py line correctly
+            // var reduce_memory = 2*container_ram if (container_ram <= 2048) else container_ram
+            var reduce_memory = (container_ram <= 2048) ? 2 * container_ram : container_ram;
+            var am_memory = Math.max(map_memory, reduce_memory);
+            genOutput("mapreducemapmemorymb", map_memory);
+            genOutput("mapreducemapjavaopts", "-Xmx" + parseInt(0.8 * map_memory) + "m");
+            genOutput("mapreducereducememorymb", reduce_memory);
+            genOutput("mapreducereducejavaopts", "-Xmx" + parseInt(0.8 * reduce_memory) + "m");
+            genOutput("yarnappmapreduceamresourcemb", am_memory);
+            genOutput("yarnappmapreduceamcommandopts", "-Xmx" + parseInt(0.8 * am_memory) + "m");
+            genOutput("mapreducetaskiosortmb", parseInt(0.4 * map_memory));
+        }
+    </script>
+</body>
+
+</html>
